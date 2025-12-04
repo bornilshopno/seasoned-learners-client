@@ -201,7 +201,7 @@ export default function AddBlog() {
               {/* Submit Button */}
               <Button type="submit" size="lg" className="w-full">
                 <Upload className="mr-2 h-5 w-5" />
-                Publish Blog
+                Publish My Blog
               </Button>
             </form>
           </CardContent>
