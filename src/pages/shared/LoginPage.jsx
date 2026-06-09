@@ -7,10 +7,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
+import { useNavigate } from "react-router";
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const { userLogIn, setUserLoading } = useAuth()
+    const navigate=useNavigate()
 
     const handleGoogleLogin = () => {
         window.location.href = "https://your-app.com/api/auth/google";
@@ -27,6 +29,7 @@ export default function LoginPage() {
             await userLogIn(email, password)
                 .then((res) => {
                     console.log(res)
+                    navigate("/")
                 })
 
         } catch (error) {

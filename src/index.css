@@ -118,3 +118,207 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO SECTION — KEYFRAME ANIMATIONS
+   Used by HeroSection.tsx for floating symbols, glowing orbs, and scroll arrow.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* floatUp: math/science symbols drift upward across the hero and loop forever.
+   Fades in at 10%, stays visible to 90%, then fades out at the top. */
+@keyframes floatUp {
+  0%   { transform: translateY(0px);    opacity: 0;    }
+  10%  {                                opacity: 0.35; }
+  90%  {                                opacity: 0.35; }
+  100% { transform: translateY(-110vh); opacity: 0;    }
+}
+
+/* pulseGlow: background orbs slowly breathe in and out (scale + opacity). */
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1);    opacity: 0.25; }
+  50%       { transform: scale(1.15); opacity: 0.45; }
+}
+
+/* bounceArrow: scroll indicator arrow gently bounces 8px downward. */
+@keyframes bounceArrow {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(8px); }
+}
+
+/* Applied to floating math/science symbols in HeroSection.tsx */
+.animate-float-up {
+  animation-name: floatUp;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;         /* applies 0% frame before the delay starts */
+  will-change: transform, opacity;   /* hints browser to use GPU compositing */
+}
+
+/* Applied to glowing orb blobs in HeroSection.tsx */
+.animate-pulse-glow {
+  animation-name: pulseGlow;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+/* Applied to the scroll-down arrow indicator in HeroSection.tsx */
+.animate-bounce-arrow {
+  animation-name: bounceArrow;
+  animation-timing-function: ease-in-out;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SECTION HEADING REVEAL
+   Used by section headings in About, Outlets, Teachers sections.
+
+   How it works:
+     1. Heading starts invisible (opacity:0, shifted 28px down)
+     2. A setTimeout in the component adds "is-visible" after 200ms
+     3. CSS transition animates it to fully visible and in position
+
+   This is simpler and more reliable than IntersectionObserver for headings
+   because headings are always the first thing visible in a section.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+}
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCROLL TILT CARDS
+   Used by cards in About, Outlets, Teachers sections.
+
+   The CSS here only defines the smooth transition timing.
+   The actual transform values (tilt angle, opacity) are calculated and applied
+   by a JavaScript scroll event listener inside each section component.
+
+   How it works:
+     1. A scroll listener runs on every scroll event (throttled via requestAnimationFrame)
+     2. For each card, it calculates how far the card's center is from the viewport center
+     3. Cards near viewport center: flat (rotateX 0deg), full opacity
+     4. Cards entering from bottom: tilt back slightly (rotateX +6deg), slightly faded
+     5. Cards exiting at top: tilt forward slightly (rotateX -6deg), slightly faded
+
+   The CSS transition here makes these JS-driven changes feel smooth rather than jumpy.
+   VBA analogy: like setting animation easing on a Shape in PowerPoint — the OS
+   handles the smoothing, you just define the start and end states.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-tilt] {
+  transition: transform 0.25s ease-out, opacity 0.3s ease-out;
+  will-change: transform, opacity;   /* GPU layer — prevents repaint on scroll */
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DIRECTIONAL SCROLL REVEAL
+   Used on inner pages (About, Outlets, Teachers) for alternating entry direction.
+
+   Elements start off-screen (opacity 0, shifted), then snap to visible when the
+   IntersectionObserver in the page adds class="is-visible".
+
+   .reveal-left  → enters from the left  (odd-numbered content blocks)
+   .reveal-right → enters from the right (even-numbered content blocks)
+   .reveal-up    → enters from below     (headings, stats)
+   .reveal-down  → enters from above     (hero sub-elements)
+
+   All share the same .is-visible state: opacity 1, no offset.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-48px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.reveal-right {
+  opacity: 0;
+  transform: translateX(48px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.reveal-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+}
+.reveal-down {
+  opacity: 0;
+  transform: translateY(-30px);
+  transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+}
+
+/* Shared visible state for all directional reveals */
+.reveal-left.is-visible,
+.reveal-right.is-visible,
+.reveal-up.is-visible,
+.reveal-down.is-visible {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STAGGER DELAY UTILITIES
+   Apply to children when you want sequential reveal (e.g. card grids).
+   Usage: <div className="reveal-up stagger-1">card 1</div>
+   ═══════════════════════════════════════════════════════════════════════════ */
+.stagger-1 { transition-delay: 0.05s; }
+.stagger-2 { transition-delay: 0.12s; }
+.stagger-3 { transition-delay: 0.19s; }
+.stagger-4 { transition-delay: 0.26s; }
+.stagger-5 { transition-delay: 0.33s; }
+.stagger-6 { transition-delay: 0.40s; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO PARALLAX BACKGROUND
+   Used on inner page hero sections. The ::before pseudo-element holds the
+   background gradient; translateZ(0) forces GPU compositing.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0px) scale(1);    }
+  50%       { transform: translateY(-12px) scale(1.02); }
+}
+.animate-hero-float {
+  animation: heroFloat 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HORIZONTAL SCROLL CAROUSEL
+   Used in the Outlets page for wheel-scroll-to-pan behavior.
+   snap-mandatory = locks to card boundaries.
+   scrollbar-width: none = hides the scroll track for a clean look.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.scroll-x-carousel {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE/Edge */
+}
+.scroll-x-carousel::-webkit-scrollbar {
+  display: none;                  /* Chrome/Safari */
+}
+.scroll-x-carousel > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PAGE HERO GRADIENT TEXT SHIMMER
+   Optional shimmer pass over gradient headline text on inner pages.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@keyframes shimmerPass {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.animate-shimmer {
+  background-size: 200% auto;
+  animation: shimmerPass 4s linear infinite;
+}

@@ -1,14 +1,15 @@
 import React from 'react';
 import Banner from './Banner';
 import FreeResources from './FreeResources';
+import HeroSection from './HeroSection';
 
 const Home = () => {
     return (
         <div>
-        
-            <Banner/>
+            <HeroSection />
+            {/* <Banner/> */}
             <FreeResources />
-      
+
         </div>
     );
 };
