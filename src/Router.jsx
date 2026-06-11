@@ -13,6 +13,7 @@ import DashHome from "./pages/dashboard/DashHome";
 import OverView from "./pages/dashboard/overview/OverView";
 import ActivityLog from "./pages/dashboard/activity/ActivityLog";
 import ProfileSetting from "./pages/dashboard/profile-setting/ProfileSetting";
+import SpecialAddBlog from "./pages/dashboard/add-blog/SpecialAddBlog";
 
 
 
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, Component: DashHome },
       { path: "add-blog", element: <AddBlog /> },
+      { path: "add-special", element: <SpecialAddBlog /> },
       { path: "overview", element: <OverView /> },
       { path: "activity", element: <ActivityLog /> },
       { path: "profile-setting", element: <ProfileSetting /> },
